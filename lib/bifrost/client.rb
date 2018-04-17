@@ -5,8 +5,6 @@ require "jwt"
 
 module Bifrost
   class Client
-    VERSION = "0.1.0"
-
     attr_reader :jwt_secret, :bifrost_server_url
 
     def initialize(jwt_secret: ENV["JWT_SECRET"], bifrost_server_url: ENV["BIFROST_URL"])
