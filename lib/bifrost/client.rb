@@ -1,4 +1,5 @@
 require "bifrost/client/version"
+require "net/http"
 require "json"
 require "jwt"
 
@@ -13,24 +14,32 @@ module Bifrost
       @bifrost_server_url = bifrost_server_url
     end
 
-    # Your code goes here...
-    def xbroadcast(channel, event:, data: nil)
+    def broadcast(channel, event:, data: nil)
       data = {
         channel: channel,
         message: {
           event: event,
           data: data
         },
-        exp: Time.zone.now.to_i + 1.hour
+        exp: Time.now.to_i + 3600
       }
-      jwt = JWT.encode(data, ENV["JWT_SECRET"], "HS512")
-      url = ENV.fetch("REALTIME_SERVICE_URL")
-      url += "/broadcast"
+      jwt = JWT.encode(data, jwt_secret, "HS512")
+      uri = URI.parse(bifrost_server_url)
+      uri.path = "/broadcast"
 
-      req = HTTP.post(url, json: { token: jwt })
+      res = Net::HTTP.start(uri.host, uri.port, use_ssl: true) do |http|
+        request                 = Net::HTTP::Post.new(uri.path)
+        request.body            = JSON.dump(token: jwt)
+        request["Content-Type"] = "application/json"
+        http.request(request)
+      end
 
-      if req.status > 206
-        raise "Error communicating with Realtime service on URL: #{url}"
+      status = Integer(res.code)
+
+      if status > 206
+        false
+      else
+        true
       end
     end
   end
