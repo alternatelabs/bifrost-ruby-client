@@ -1,6 +1,8 @@
 # Bifrost Ruby Client
 
-A ruby client helper for the [bifrost crystal](https://github.com/alternatelabs/bifrost) websockets server.
+[![Build Status](https://travis-ci.org/alternatelabs/bifrost-ruby-client.svg?branch=master)](https://travis-ci.org/alternatelabs/bifrost-ruby-client)
+
+A ruby client library for the [bifrost crystal](https://github.com/alternatelabs/bifrost) websockets server.
 
 ## Installation
 
