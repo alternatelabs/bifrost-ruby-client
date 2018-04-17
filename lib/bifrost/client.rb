@@ -32,9 +32,7 @@ module Bifrost
         http.request(request)
       end
 
-      status = Integer(res.code)
-
-      if status > 206
+      if Integer(res.code) > 206
         false
       else
         true
