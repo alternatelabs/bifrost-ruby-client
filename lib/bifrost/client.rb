@@ -42,5 +42,10 @@ module Bifrost
         true
       end
     end
+
+    def token_for(channels:)
+      payload = { channels: channels }
+      JWT.encode(payload, jwt_secret, "HS512")
+    end
   end
 end

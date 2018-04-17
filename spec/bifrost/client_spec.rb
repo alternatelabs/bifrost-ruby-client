@@ -69,8 +69,14 @@ RSpec.describe Bifrost::Client do
     end
   end
 
-  describe "#token" do
-    it "generates JWTs for allowed channels"
+  describe "#token_for(channels:)" do
+    it "generates JWTs for allowed channels" do
+      jwt = subject.token_for(channels: %w[global agent:47])
+
+      decoded = decode_jwt(jwt)
+
+      expect(decoded["channels"]).to eq(%w[global agent:47])
+    end
   end
 
   def decode_jwt(payload)
