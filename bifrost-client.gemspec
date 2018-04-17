@@ -8,6 +8,7 @@ Gem::Specification.new do |spec|
   spec.version       = Bifrost::Client::VERSION
   spec.authors       = ["Pete Hawkins"]
   spec.email         = ["pete@alternatelabs.co"]
+  spec.metadata      = { "source_code_uri" => "https://github.com/alternatelabs/bifrost-ruby-client" }
 
   spec.summary       = %q{Ruby client library for the bifrost crystal websocket server}
   spec.description   = %q{Bifrost is a crystal websocket server, this is a client library to simplify broadcasting messages to it.}
