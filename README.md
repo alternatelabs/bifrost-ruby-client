@@ -16,9 +16,55 @@ And then execute:
 $ bundle
 ```
 
+## Configuration
+
+By default Bifrost::Client will look for environment variables:
+
+```sh
+JWT_SECRET=9c3ed1aa0ba8405effdb363839caa3cc
+BIFROST_URL=https://bifrost-server.myapp.com
+```
+
+And you can create a Bifrost client like so:
+
+```ruby
+client = Bifrost::Client.new
+```
+
+Or you can pass in configuration directly:
+
+```ruby
+client = Bifrost::Client.new(
+  jwt_secret: "9c3ed1aa0ba8405effdb363839caa3cc",
+  bifrost_server_url: "https://bifrost-server.myapp.com"
+)
+```
+
 ## Usage
 
-TODO: Write usage instructions here
+### Token helper
+
+This helps you generate a JWT to give an end user permission to connect to a channel called `user:thor`
+
+```ruby
+token = client.token_for(channels: %w[user:thor]) # => "eyJhbGciOiJIUzUxMiJ9.eyJjaGFubmVscyI6WyJ1c2VyOnRob3IiXX0.SBgGNE-n7S8gVtYQ3wg7_WG2TqOGNFf-jy0GW57_YV-B-xjekm4KCQwTZIqxL_TXoqbWW3tThT9YTt4GLD4Y7A"
+```
+
+Once you have this token [follow the instructions on the bifrost repo](https://github.com/alternatelabs/bifrost#1-create-an-api-endpoint-in-your-application-that-can-give-users-a-realtime-token) to provide that token to client side JS and connect using ReconnectingWebsocket.
+
+### Broadcast events
+
+Use `client#broadcast` when you want to send an event out to all members of a channel. Payload must be a string, we recommend you encode it to JSON and can safely `JSON.parse(payload)` in your client side code upon receiving the message.
+
+```ruby
+begin
+  payload = JSON.dump({ name: "Hela" })
+  channel = "user:thor"
+  client.broadcast(channel, event: "invader_detected", data: payload) # => { deliveries: 1 }
+rescue Bifrost::ServerError => e
+  # Do something with the error
+end
+```
 
 ## Development
 
@@ -28,7 +74,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/bifrost-client.
+Bug reports and pull requests are welcome on GitHub at https://github.com/alternatelabs/bifrost-ruby-client.
 
 ## License
 

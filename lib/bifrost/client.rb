@@ -34,9 +34,9 @@ module Bifrost
       end
 
       if Integer(res.code) > 206
-        false
+        raise ServerError.new("Bifrost server responded with #{res.code}: #{res.body}")
       else
-        true
+        JSON.parse(res.body, symbolize_names: true)
       end
     end
 
@@ -45,4 +45,6 @@ module Bifrost
       JWT.encode(payload, jwt_secret, "HS512")
     end
   end
+
+  class ServerError < StandardError; end
 end

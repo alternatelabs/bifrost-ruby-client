@@ -41,7 +41,7 @@ RSpec.describe Bifrost::Client do
 
         result = subject.broadcast(channel, event: "event_name", data: "test")
 
-        expect(result).to eq(true)
+        expect(result).to eq({message: "Success", deliveries: 1})
 
         expect(WebMock).to(have_requested(:post, "#{server_url}/broadcast").with { |req|
           payload = JSON.parse(req.body)["token"]
@@ -62,9 +62,9 @@ RSpec.describe Bifrost::Client do
         stub_request(:post, %r{#{server_url}})
           .to_return(body: bifrost_resp, status: 400, headers: resp_headers)
 
-        result = subject.broadcast(channel, event: "event_name", data: "test")
-
-        expect(result).to eq(false)
+        expect do
+          subject.broadcast(channel, event: "event_name", data: "test")
+        end.to raise_error(Bifrost::ServerError)
       end
     end
   end
