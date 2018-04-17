@@ -24,8 +24,9 @@ module Bifrost
       jwt = JWT.encode(data, jwt_secret, "HS512")
       uri = URI.parse(bifrost_server_url)
       uri.path = "/broadcast"
+      ssl = uri.is_a?(URI::HTTPS)
 
-      res = Net::HTTP.start(uri.host, uri.port, use_ssl: true) do |http|
+      res = Net::HTTP.start(uri.host, uri.port, use_ssl: ssl) do |http|
         request                 = Net::HTTP::Post.new(uri.path)
         request.body            = JSON.dump(token: jwt)
         request["Content-Type"] = "application/json"
