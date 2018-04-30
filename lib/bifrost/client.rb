@@ -19,7 +19,7 @@ module Bifrost
           event: event,
           data: data
         },
-        exp: Time.now.to_i + 3600
+        exp: Time.now.to_i + 60
       }
       jwt = JWT.encode(data, jwt_secret, "HS512")
       uri = URI.parse(bifrost_server_url)
@@ -41,7 +41,7 @@ module Bifrost
     end
 
     def token_for(channels:)
-      payload = { channels: channels }
+      payload = { channels: channels, exp: Time.now.to_i + 60 }
       JWT.encode(payload, jwt_secret, "HS512")
     end
   end

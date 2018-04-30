@@ -47,7 +47,7 @@ RSpec.describe Bifrost::Client do
           payload = JSON.parse(req.body)["token"]
           expect(decode_jwt(payload)).to eq(
             "channel" => channel,
-            "exp" => Time.now.to_i + 3600,
+            "exp" => Time.now.to_i + 60,
             "message" => {
               "event" => "event_name",
               "data" => "test"
@@ -70,12 +70,15 @@ RSpec.describe Bifrost::Client do
   end
 
   describe "#token_for(channels:)" do
+    let(:jwt) { subject.token_for(channels: %w[global agent:47]) }
+    let(:decoded) { decode_jwt(jwt) }
+
     it "generates JWTs for allowed channels" do
-      jwt = subject.token_for(channels: %w[global agent:47])
-
-      decoded = decode_jwt(jwt)
-
       expect(decoded["channels"]).to eq(%w[global agent:47])
+    end
+
+    it "expires JWTs after 60 seconds" do
+      expect(decoded["exp"]).to eq(Time.now.to_i + 60)
     end
   end
 
